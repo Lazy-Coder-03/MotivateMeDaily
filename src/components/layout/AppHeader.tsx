@@ -1,8 +1,9 @@
+
 "use client";
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, User, Settings, Sparkles } from 'lucide-react';
+import { LayoutDashboard, User, Settings, Lightbulb } from 'lucide-react'; // Added Lightbulb
 import AppLogo from '@/components/AppLogo';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import { Button } from '@/components/ui/button';
 const navItems = [
   { href: '/', label: 'Board', icon: LayoutDashboard },
   { href: '/profile', label: 'Profile', icon: User },
+  { href: '/facts', label: 'Fun Facts', icon: Lightbulb }, // Added Fun Facts
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -20,7 +22,7 @@ export default function AppHeader() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <AppLogo />
-        <nav className="flex items-center space-x-2 sm:space-x-4">
+        <nav className="flex items-center space-x-1 sm:space-x-2"> {/* Adjusted spacing for more items */}
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (

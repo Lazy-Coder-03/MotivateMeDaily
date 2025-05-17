@@ -43,5 +43,26 @@ export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
   startTime: 9, // 9 AM
   endTime: 17,  // 5 PM
   numQuotes: 1,
-  intervalHours: 24, // Effectively once a day within the window by default
+  intervalHours: 4, 
 };
+
+// Types for Fact Generation
+export const FACT_STYLES = [
+  'General & Informative',
+  'Niche & Specific',
+  'Dark & Unusual',
+  'Lighthearted & Fun',
+  'Mind-blowing & Surprising',
+] as const;
+
+export type FactStyle = typeof FACT_STYLES[number];
+
+export interface FactGenerationInput {
+  topic: string;
+  factStyle: FactStyle;
+}
+
+export interface GeneratedFact {
+  fact: string;
+  source?: string; // Optional source for the fact
+}
