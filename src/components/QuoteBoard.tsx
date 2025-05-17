@@ -3,7 +3,7 @@
 import type { Quote, UserProfile } from '@/types';
 import QuoteCard from './QuoteCard';
 import { Button } from './ui/button';
-import { PlusCircle, AlertTriangle } from 'lucide-react';
+import { PlusCircle, AlertTriangle, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { generatePersonalizedQuote } from '@/ai/flows/generate-personalized-quote';
 import { useToast } from '@/hooks/use-toast';
