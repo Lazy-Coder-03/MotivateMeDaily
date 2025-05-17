@@ -7,6 +7,7 @@ export interface UserProfile {
   gender?: 'male' | 'female' | 'non-binary' | 'other' | 'prefer_not_to_say';
   relationshipStatus?: 'single' | 'in_a_relationship' | 'married' | 'engaged' | 'divorced' | 'widowed' | 'complicated' | 'prefer_not_to_say';
   sexuality?: 'straight' | 'gay' | 'lesbian' | 'bisexual' | 'pansexual' | 'asexual' | 'queer' | 'questioning' | 'other' | 'prefer_not_to_say';
+  onlyFamousQuotes?: boolean;
 }
 
 export interface Quote {
@@ -29,6 +30,7 @@ export const DEFAULT_USER_PROFILE: UserProfile = {
   gender: 'prefer_not_to_say',
   relationshipStatus: 'prefer_not_to_say',
   sexuality: 'prefer_not_to_say',
+  onlyFamousQuotes: false,
 };
 
 export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {

@@ -21,11 +21,12 @@ const GeneratePersonalizedQuoteInputSchema = z.object({
   gender: z.enum(['male', 'female', 'non-binary', 'other', 'prefer_not_to_say']).optional().describe("The user's gender identity, if provided."),
   relationshipStatus: z.enum(['single', 'in_a_relationship', 'married', 'engaged', 'divorced', 'widowed', 'complicated', 'prefer_not_to_say']).optional().describe("The user's relationship status, if provided."),
   sexuality: z.enum(['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'queer', 'questioning', 'other', 'prefer_not_to_say']).optional().describe("The user's sexuality, if provided."),
+  onlyFamousQuotes: z.boolean().optional().describe("If true, the quote must be sourced from a known person, character, or book. If false or undefined, the AI can generate an original quote or source one."),
 });
 export type GeneratePersonalizedQuoteInput = z.infer<typeof GeneratePersonalizedQuoteInputSchema>;
 
 const GeneratePersonalizedQuoteOutputSchema = z.object({
-  quote: z.string().describe('A personalized motivational quote.'),
+  quote: z.string().describe('A personalized motivational quote. If onlyFamousQuotes was true and no suitable famous quote was found, this might state that.'),
 });
 export type GeneratePersonalizedQuoteOutput = z.infer<typeof GeneratePersonalizedQuoteOutputSchema>;
 
@@ -62,7 +63,14 @@ Sexuality: {{{sexuality}}}
 Adjust the style and language of the quote to match the desired tone if provided. If no tone is specified, use a general inspirational and uplifting tone.
 The quote should be concise and impactful.
 
+{{#if onlyFamousQuotes}}
+IMPORTANT: The user has requested that the quote MUST be from a well-known book, fictional character, or real influential figure.
+You MUST find an existing quote from such a source that is relevant to the user's details. Do NOT generate an original quote.
+If you cannot find a suitable famous quote, clearly state that you couldn't find a famous quote matching their criteria, for example: "I couldn't find a famous quote that perfectly matched your request, but here's a general one: [general famous quote]" or simply "Could not find a specific famous quote for your criteria."
+Attribute the quote if possible (e.g., "- Character Name, Book Title" or "- Influential Figure").
+{{else}}
 If appropriate and aligns with the user's details (age, goals, life situation, motivation focus, and any provided demographic information like gender, relationship status, or sexuality), you can also draw inspiration from well-known books, fictional characters, or real influential figures who might offer relevant wisdom for the user's current stage or focus. Use any provided demographic information respectfully to enhance personalization and relevance, without making stereotypes. The quote should still be original and personalized, but can subtly reflect the essence or style of such a source if you choose to use one. For example, if the user is a student struggling with procrastination, a quote inspired by a stoic philosopher might be fitting.
+{{/if}}
 
 Quote:`,
 });
@@ -78,4 +86,3 @@ const generatePersonalizedQuoteFlow = ai.defineFlow(
     return output!;
   }
 );
-

@@ -29,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 interface UserProfileFormProps {
   initialProfile: UserProfile;
@@ -89,6 +90,7 @@ export default function UserProfileForm({ initialProfile, onSave }: UserProfileF
       gender: initialProfile.gender || "prefer_not_to_say",
       relationshipStatus: initialProfile.relationshipStatus || "prefer_not_to_say",
       sexuality: initialProfile.sexuality || "prefer_not_to_say",
+      onlyFamousQuotes: initialProfile.onlyFamousQuotes || false,
     },
   });
 
@@ -102,6 +104,7 @@ export default function UserProfileForm({ initialProfile, onSave }: UserProfileF
       gender: data.gender,
       relationshipStatus: data.relationshipStatus,
       sexuality: data.sexuality,
+      onlyFamousQuotes: data.onlyFamousQuotes,
     };
     onSave(profileToSave);
     toast({
@@ -302,6 +305,29 @@ export default function UserProfileForm({ initialProfile, onSave }: UserProfileF
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="onlyFamousQuotes"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                  <div className="space-y-0.5">
+                    <FormLabel>Only Quotes from Famous Sources?</FormLabel>
+                    <FormDescription>
+                      If enabled, quotes will only be from known people, characters, or books.
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
 
             <Button type="submit" className="w-full" size="lg">
               <Save className="mr-2 h-4 w-4" /> Save Profile

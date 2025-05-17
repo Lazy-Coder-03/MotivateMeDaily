@@ -4,7 +4,7 @@
 import type { Quote, UserProfile } from '@/types';
 import QuoteCard from './QuoteCard';
 import { Button } from './ui/button';
-import { PlusCircle, AlertTriangle, Sparkles, Pin } from 'lucide-react';
+import { PlusCircle, AlertTriangle, SparklesIcon } from 'lucide-react'; // Renamed Sparkles to SparklesIcon to avoid conflict
 import Link from 'next/link';
 import { generatePersonalizedQuote } from '@/ai/flows/generate-personalized-quote';
 import { useToast } from '@/hooks/use-toast';
@@ -23,12 +23,12 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
   const [quotes, setQuotes] = useState<Quote[]>(initialQuotes);
 
   const handleGenerateQuote = async () => {
-    if (!userProfile || !userProfile.age || !userProfile.motivationFocus || !userProfile.goals || !userProfile.lifeSituation) {
+    if (!userProfile || !userProfile.age || !userProfile.goals || !userProfile.lifeSituation || !userProfile.motivationFocus) {
       let description = "Please complete your profile to generate personalized quotes. Age, goals, life situation, and motivation focus are required.";
       if (userProfile) {
-        if (!userProfile.motivationFocus) description = "Please specify what you need motivation for in your profile.";
-        else if (!userProfile.goals) description = "Please specify your goals in your profile.";
+        if (!userProfile.goals) description = "Please specify your goals in your profile.";
         else if (!userProfile.lifeSituation) description = "Please specify your current life situation in your profile.";
+        else if (!userProfile.motivationFocus) description = "Please specify what you need motivation for in your profile.";
         else if (!userProfile.age) description = "Please provide your age in your profile for better personalization.";
       }
       
@@ -52,6 +52,7 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
         gender: userProfile.gender,
         relationshipStatus: userProfile.relationshipStatus,
         sexuality: userProfile.sexuality,
+        onlyFamousQuotes: userProfile.onlyFamousQuotes,
       });
       const newQuote: Quote = {
         id: Date.now().toString(), // Simple ID generation
@@ -136,14 +137,14 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
 
       {quotes.length === 0 && !isLoadingQuote && (
         <div className="text-center py-10 border-2 border-dashed border-muted-foreground/30 rounded-lg">
-          <Sparkles className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+          <SparklesIcon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
           <h3 className="text-xl font-semibold text-muted-foreground">Your board is empty!</h3>
           <p className="text-muted-foreground">Click "New Quote" to get your first piece of motivation.</p>
         </div>
       )}
 
       {quotes.length > 0 && (
-         <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-12 space-y-12">
+         <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-6 sm:gap-8 md:gap-12 space-y-6 sm:space-y-8 md:space-y-12">
           {quotes.map((quote) => (
             <QuoteCard 
               key={quote.id} 
