@@ -12,6 +12,7 @@ const geistSans = Geist({
 export const metadata: Metadata = {
   title: 'MotivateMe Daily',
   description: 'Get your daily dose of personalized motivation.',
+  manifest: '/manifest.json', // Added manifest link here for Next.js metadata
 };
 
 export default function RootLayout({
@@ -21,6 +22,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* For older browsers or specific PWA setups, direct link can be useful */}
+        {/* <link rel="manifest" href="/manifest.json" /> */}
+        {/* theme-color can also be set here, though Next.js metadata should handle it via manifest */}
+        <meta name="theme-color" content="#B38600" />
+      </head>
       <body className={`${geistSans.variable} font-sans antialiased flex flex-col min-h-screen`}>
         <AppHeader />
         <main className="flex-grow container mx-auto px-4 py-8">
