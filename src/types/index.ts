@@ -2,6 +2,7 @@ export interface UserProfile {
   age: number | undefined;
   goals: string;
   lifeSituation: string;
+  motivationFocus: string; // New field
   motivationalTone?: 'inspirational' | 'humorous' | 'direct' | 'gentle' | 'philosophical';
 }
 
@@ -20,6 +21,7 @@ export const DEFAULT_USER_PROFILE: UserProfile = {
   age: undefined,
   goals: '',
   lifeSituation: '',
+  motivationFocus: '', // New field default
   motivationalTone: 'inspirational',
 };
 

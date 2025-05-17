@@ -50,6 +50,7 @@ export default function UserProfileForm({ initialProfile, onSave }: UserProfileF
       age: initialProfile.age || '',
       goals: initialProfile.goals || "",
       lifeSituation: initialProfile.lifeSituation || "",
+      motivationFocus: initialProfile.motivationFocus || "", // Added default value
       motivationalTone: initialProfile.motivationalTone || "inspirational",
     },
   });
@@ -59,6 +60,7 @@ export default function UserProfileForm({ initialProfile, onSave }: UserProfileF
       age: data.age ? Number(data.age) : undefined,
       goals: data.goals,
       lifeSituation: data.lifeSituation,
+      motivationFocus: data.motivationFocus, // Save the new field
       motivationalTone: data.motivationalTone,
     };
     onSave(profileToSave);
@@ -130,6 +132,26 @@ export default function UserProfileForm({ initialProfile, onSave }: UserProfileF
                   </FormControl>
                   <FormDescription>
                     Briefly describe your current circumstances.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="motivationFocus"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>What do you need motivation for?</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="e.g., Staying disciplined with studies, overcoming a setback, improving relationships"
+                      className="resize-none"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Specify the area where you're seeking motivation.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

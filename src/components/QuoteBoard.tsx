@@ -3,7 +3,7 @@
 import type { Quote, UserProfile } from '@/types';
 import QuoteCard from './QuoteCard';
 import { Button } from './ui/button';
-import { PlusCircle, AlertTriangle, Sparkles } from 'lucide-react';
+import { PlusCircle, AlertTriangle, Sparkles } from 'lucide-react'; // Ensure Sparkles is imported
 import Link from 'next/link';
 import { generatePersonalizedQuote } from '@/ai/flows/generate-personalized-quote';
 import { useToast } from '@/hooks/use-toast';
@@ -22,10 +22,17 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
   const [quotes, setQuotes] = useState<Quote[]>(initialQuotes);
 
   const handleGenerateQuote = async () => {
-    if (!userProfile || !userProfile.age) {
+    if (!userProfile || !userProfile.age || !userProfile.motivationFocus) {
+      let description = "Please complete your profile to generate personalized quotes.";
+      if (userProfile && !userProfile.motivationFocus) {
+        description = "Please specify what you need motivation for in your profile."
+      } else if (userProfile && !userProfile.age) {
+        description = "Please provide your age in your profile for better personalization."
+      }
+      
       toast({
         title: "Profile Incomplete",
-        description: "Please complete your profile to generate personalized quotes.",
+        description: description,
         variant: "destructive",
         action: <Button asChild variant="outline"><Link href="/profile">Go to Profile</Link></Button>,
       });
@@ -38,6 +45,7 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
         age: userProfile.age,
         goals: userProfile.goals,
         lifeSituation: userProfile.lifeSituation,
+        motivationFocus: userProfile.motivationFocus, // Pass the new field
         motivationalTone: userProfile.motivationalTone || 'inspirational',
       });
       const newQuote: Quote = {
@@ -130,7 +138,7 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
       )}
 
       {quotes.length > 0 && (
-         <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-8 space-y-8">
+         <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-12 space-y-12">
           {quotes.map((quote) => (
             <QuoteCard 
               key={quote.id} 
