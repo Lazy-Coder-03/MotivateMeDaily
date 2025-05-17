@@ -43,6 +43,8 @@ export default function NotificationSettingsForm({ initialSettings, onSave }: No
   });
 
   const watchedEnabled = form.watch("enabled");
+  const watchedStartTime = form.watch("startTime");
+  const watchedEndTime = form.watch("endTime");
 
   function onSubmit(data: NotificationSettingsFormData) {
     onSave(data);
@@ -53,9 +55,9 @@ export default function NotificationSettingsForm({ initialSettings, onSave }: No
   }
 
   const formatHour = (hour: number): string => {
-    const h = hour % 12 || 12; // Convert 0 to 12 for 12 AM, and 12 to 12 for 12 PM
-    const ampm = hour >= 12 && hour < 24 ? 'PM' : 'AM'; // handle 24 as 12 AM
-    if (hour === 24) return '12:00 AM (next day)'; // Edge case for slider max if it were 24
+    const h = hour % 12 || 12; 
+    const ampm = hour >= 12 && hour < 24 ? 'PM' : 'AM'; 
+    if (hour === 24) return '12:00 AM (next day)';
     return `${h.toString().padStart(2, '0')}:00 ${ampm}`;
   };
 
@@ -97,61 +99,36 @@ export default function NotificationSettingsForm({ initialSettings, onSave }: No
 
             {watchedEnabled && (
               <div className="space-y-6 pt-4 border-t mt-6">
-                <FormField
-                  control={form.control}
-                  name="startTime"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="flex justify-between items-center mb-1">
-                        <FormLabel>Notification Start Time</FormLabel>
-                        <span className="text-sm font-medium text-primary">{formatHour(field.value)}</span>
-                      </div>
-                      <FormControl>
-                        <Slider
-                          value={[field.value]}
-                          min={0}
-                          max={23}
-                          step={1}
-                          onValueChange={(value) => field.onChange(value[0])}
-                          className="my-3"
-                          aria-label={`Notification start time: ${formatHour(field.value)}`}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Select the hour when you want to start receiving notifications.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
+                <FormItem>
+                  <div className="flex justify-between items-center mb-1">
+                    <FormLabel>Active Notification Window</FormLabel>
+                    <span className="text-sm font-medium text-primary">
+                      {formatHour(watchedStartTime)} - {formatHour(watchedEndTime)}
+                    </span>
+                  </div>
+                  <Slider
+                    value={[watchedStartTime, watchedEndTime]}
+                    min={0}
+                    max={23}
+                    step={1}
+                    onValueChange={(values: number[]) => {
+                      form.setValue('startTime', values[0], { shouldValidate: true });
+                      form.setValue('endTime', values[1], { shouldValidate: true });
+                    }}
+                    className="my-4" // Added more margin for better spacing
+                    aria-label={`Active notification window: ${formatHour(watchedStartTime)} to ${formatHour(watchedEndTime)}`}
+                  />
+                  <FormDescription>
+                    Set the time window during which you want to receive notifications.
+                  </FormDescription>
+                  {/* Display error message for endTime if validation fails (e.g., end time not after start time) */}
+                  {form.formState.errors.endTime && (
+                    <FormMessage>{form.formState.errors.endTime.message}</FormMessage>
                   )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="endTime"
-                  render={({ field }) => (
-                    <FormItem>
-                       <div className="flex justify-between items-center mb-1">
-                        <FormLabel>Notification End Time</FormLabel>
-                        <span className="text-sm font-medium text-primary">{formatHour(field.value)}</span>
-                      </div>
-                      <FormControl>
-                        <Slider
-                          value={[field.value]}
-                          min={0}
-                          max={23}
-                          step={1}
-                          onValueChange={(value) => field.onChange(value[0])}
-                          className="my-3"
-                          aria-label={`Notification end time: ${formatHour(field.value)}`}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Select the hour when you want to stop receiving notifications for the day.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
+                   {form.formState.errors.startTime && (
+                    <FormMessage>{form.formState.errors.startTime.message}</FormMessage>
                   )}
-                />
+                </FormItem>
 
                 <FormField
                   control={form.control}
