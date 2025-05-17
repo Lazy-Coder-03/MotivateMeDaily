@@ -1,9 +1,10 @@
+
 "use client";
 
 import type { Quote, UserProfile } from '@/types';
 import QuoteCard from './QuoteCard';
 import { Button } from './ui/button';
-import { PlusCircle, AlertTriangle, Sparkles } from 'lucide-react'; // Ensure Sparkles is imported
+import { PlusCircle, AlertTriangle, Sparkles, Pin } from 'lucide-react';
 import Link from 'next/link';
 import { generatePersonalizedQuote } from '@/ai/flows/generate-personalized-quote';
 import { useToast } from '@/hooks/use-toast';
@@ -22,12 +23,13 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
   const [quotes, setQuotes] = useState<Quote[]>(initialQuotes);
 
   const handleGenerateQuote = async () => {
-    if (!userProfile || !userProfile.age || !userProfile.motivationFocus) {
-      let description = "Please complete your profile to generate personalized quotes.";
-      if (userProfile && !userProfile.motivationFocus) {
-        description = "Please specify what you need motivation for in your profile."
-      } else if (userProfile && !userProfile.age) {
-        description = "Please provide your age in your profile for better personalization."
+    if (!userProfile || !userProfile.age || !userProfile.motivationFocus || !userProfile.goals || !userProfile.lifeSituation) {
+      let description = "Please complete your profile to generate personalized quotes. Age, goals, life situation, and motivation focus are required.";
+      if (userProfile) {
+        if (!userProfile.motivationFocus) description = "Please specify what you need motivation for in your profile.";
+        else if (!userProfile.goals) description = "Please specify your goals in your profile.";
+        else if (!userProfile.lifeSituation) description = "Please specify your current life situation in your profile.";
+        else if (!userProfile.age) description = "Please provide your age in your profile for better personalization.";
       }
       
       toast({
@@ -45,8 +47,11 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
         age: userProfile.age,
         goals: userProfile.goals,
         lifeSituation: userProfile.lifeSituation,
-        motivationFocus: userProfile.motivationFocus, // Pass the new field
+        motivationFocus: userProfile.motivationFocus,
         motivationalTone: userProfile.motivationalTone || 'inspirational',
+        gender: userProfile.gender,
+        relationshipStatus: userProfile.relationshipStatus,
+        sexuality: userProfile.sexuality,
       });
       const newQuote: Quote = {
         id: Date.now().toString(), // Simple ID generation
@@ -102,7 +107,7 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
   }
   
   return (
-    <div className="space-y-8">
+    <div className="space-y-12">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold tracking-tight">Your Motivation Board</h2>
         <Button onClick={handleGenerateQuote} disabled={isLoadingQuote} size="lg">
@@ -124,8 +129,8 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
       </div>
 
       {isLoadingQuote && quotes.length === 0 && (
-         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-60 w-full bg-yellow-200/50" />)}
+         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12">
+          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-64 w-full bg-card" />)}
         </div>
       )}
 

@@ -8,6 +8,9 @@ export const userProfileSchema = z.object({
   motivationalTone: z.enum(['inspirational', 'humorous', 'direct', 'gentle', 'philosophical'], {
     required_error: "Please select a motivational tone."
   }).optional(),
+  gender: z.enum(['male', 'female', 'non-binary', 'other', 'prefer_not_to_say']).optional(),
+  relationshipStatus: z.enum(['single', 'in_a_relationship', 'married', 'engaged', 'divorced', 'widowed', 'complicated', 'prefer_not_to_say']).optional(),
+  sexuality: z.enum(['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'queer', 'questioning', 'other', 'prefer_not_to_say']).optional(),
 });
 
 export type UserProfileFormData = z.infer<typeof userProfileSchema>;

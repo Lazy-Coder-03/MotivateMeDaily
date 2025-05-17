@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -17,6 +18,9 @@ const GeneratePersonalizedQuoteInputSchema = z.object({
   lifeSituation: z.string().describe("The user's current life situation."),
   motivationFocus: z.string().describe("What the user specifically needs motivation for."),
   motivationalTone: z.enum(['inspirational', 'humorous', 'direct', 'gentle', 'philosophical']).optional().describe('The desired tone of the motivational quote.'),
+  gender: z.enum(['male', 'female', 'non-binary', 'other', 'prefer_not_to_say']).optional().describe("The user's gender identity, if provided."),
+  relationshipStatus: z.enum(['single', 'in_a_relationship', 'married', 'engaged', 'divorced', 'widowed', 'complicated', 'prefer_not_to_say']).optional().describe("The user's relationship status, if provided."),
+  sexuality: z.enum(['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'queer', 'questioning', 'other', 'prefer_not_to_say']).optional().describe("The user's sexuality, if provided."),
 });
 export type GeneratePersonalizedQuoteInput = z.infer<typeof GeneratePersonalizedQuoteInputSchema>;
 
@@ -44,11 +48,26 @@ Specific focus for motivation: {{{motivationFocus}}}
 {{#if motivationalTone}}
 Desired Tone: {{{motivationalTone}}}
 {{/if}}
+{{#if gender}}
+{{#unless (eq gender "prefer_not_to_say")}}
+Gender: {{{gender}}}
+{{/unless}}
+{{/if}}
+{{#if relationshipStatus}}
+{{#unless (eq relationshipStatus "prefer_not_to_say")}}
+Relationship Status: {{{relationshipStatus}}}
+{{/unless}}
+{{/if}}
+{{#if sexuality}}
+{{#unless (eq sexuality "prefer_not_to_say")}}
+Sexuality: {{{sexuality}}}
+{{/unless}}
+{{/if}}
 
 Adjust the style and language of the quote to match the desired tone if provided. If no tone is specified, use a general inspirational and uplifting tone.
 The quote should be concise and impactful.
 
-If appropriate and aligns with the user's details (age, goals, life situation, motivation focus), you can also draw inspiration from well-known books, fictional characters, or real influential figures who might offer relevant wisdom for the user's current stage or focus. The quote should still be original and personalized, but can subtly reflect the essence or style of such a source if you choose to use one. For example, if the user is a student struggling with procrastination, a quote inspired by a stoic philosopher might be fitting.
+If appropriate and aligns with the user's details (age, goals, life situation, motivation focus, and any provided demographic information like gender, relationship status, or sexuality), you can also draw inspiration from well-known books, fictional characters, or real influential figures who might offer relevant wisdom for the user's current stage or focus. Use any provided demographic information respectfully to enhance personalization and relevance, without making stereotypes. The quote should still be original and personalized, but can subtly reflect the essence or style of such a source if you choose to use one. For example, if the user is a student struggling with procrastination, a quote inspired by a stoic philosopher might be fitting.
 
 Quote:`,
 });

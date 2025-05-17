@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,6 +43,39 @@ const toneOptions = [
   { value: 'philosophical', label: 'Philosophical & Reflective' },
 ] as const;
 
+const genderOptions = [
+  { value: 'male', label: 'Male' },
+  { value: 'female', label: 'Female' },
+  { value: 'non-binary', label: 'Non-binary' },
+  { value: 'other', label: 'Other' },
+  { value: 'prefer_not_to_say', label: 'Prefer not to say' },
+] as const;
+
+const relationshipStatusOptions = [
+  { value: 'single', label: 'Single' },
+  { value: 'in_a_relationship', label: 'In a relationship' },
+  { value: 'married', label: 'Married' },
+  { value: 'engaged', label: 'Engaged'},
+  { value: 'divorced', label: 'Divorced' },
+  { value: 'widowed', label: 'Widowed' },
+  { value: 'complicated', label: "It's complicated" },
+  { value: 'prefer_not_to_say', label: 'Prefer not to say' },
+] as const;
+
+const sexualityOptions = [
+  { value: 'straight', label: 'Straight' },
+  { value: 'gay', label: 'Gay' },
+  { value: 'lesbian', label: 'Lesbian' },
+  { value: 'bisexual', label: 'Bisexual' },
+  { value: 'pansexual', label: 'Pansexual' },
+  { value: 'asexual', label: 'Asexual' },
+  { value: 'queer', label: 'Queer' },
+  { value: 'questioning', label: 'Questioning' },
+  { value: 'other', label: 'Other' },
+  { value: 'prefer_not_to_say', label: 'Prefer not to say' },
+] as const;
+
+
 export default function UserProfileForm({ initialProfile, onSave }: UserProfileFormProps) {
   const { toast } = useToast();
   const form = useForm<UserProfileFormData>({
@@ -50,8 +84,11 @@ export default function UserProfileForm({ initialProfile, onSave }: UserProfileF
       age: initialProfile.age || '',
       goals: initialProfile.goals || "",
       lifeSituation: initialProfile.lifeSituation || "",
-      motivationFocus: initialProfile.motivationFocus || "", // Added default value
+      motivationFocus: initialProfile.motivationFocus || "",
       motivationalTone: initialProfile.motivationalTone || "inspirational",
+      gender: initialProfile.gender || "prefer_not_to_say",
+      relationshipStatus: initialProfile.relationshipStatus || "prefer_not_to_say",
+      sexuality: initialProfile.sexuality || "prefer_not_to_say",
     },
   });
 
@@ -60,8 +97,11 @@ export default function UserProfileForm({ initialProfile, onSave }: UserProfileF
       age: data.age ? Number(data.age) : undefined,
       goals: data.goals,
       lifeSituation: data.lifeSituation,
-      motivationFocus: data.motivationFocus, // Save the new field
+      motivationFocus: data.motivationFocus,
       motivationalTone: data.motivationalTone,
+      gender: data.gender,
+      relationshipStatus: data.relationshipStatus,
+      sexuality: data.sexuality,
     };
     onSave(profileToSave);
     toast({
@@ -75,7 +115,7 @@ export default function UserProfileForm({ initialProfile, onSave }: UserProfileF
       <CardHeader>
         <CardTitle className="text-2xl">Your Motivational Profile</CardTitle>
         <CardDescription>
-          Tell us about yourself so we can tailor your motivational quotes.
+          Tell us about yourself so we can tailor your motivational quotes. All fields are optional unless marked.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -102,7 +142,7 @@ export default function UserProfileForm({ initialProfile, onSave }: UserProfileF
               name="goals"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Your Goals</FormLabel>
+                  <FormLabel>Your Goals <span className="text-destructive">*</span></FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="e.g., Learn a new skill, run a marathon, start a business"
@@ -122,7 +162,7 @@ export default function UserProfileForm({ initialProfile, onSave }: UserProfileF
               name="lifeSituation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Current Life Situation</FormLabel>
+                  <FormLabel>Current Life Situation <span className="text-destructive">*</span></FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="e.g., Student, working professional, new parent, facing challenges"
@@ -142,7 +182,7 @@ export default function UserProfileForm({ initialProfile, onSave }: UserProfileF
               name="motivationFocus"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>What do you need motivation for?</FormLabel>
+                  <FormLabel>What do you need motivation for? <span className="text-destructive">*</span></FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="e.g., Staying disciplined with studies, overcoming a setback, improving relationships"
@@ -184,6 +224,85 @@ export default function UserProfileForm({ initialProfile, onSave }: UserProfileF
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="gender"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Gender</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your gender" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {genderOptions.map(option => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>Optional: Helps in personalizing quote context.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="relationshipStatus"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Relationship Status</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your relationship status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {relationshipStatusOptions.map(option => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>Optional: Your relationship status can add context.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="sexuality"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Sexuality</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your sexuality" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {sexualityOptions.map(option => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>Optional: Helps understand perspectives for motivation.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <Button type="submit" className="w-full" size="lg">
               <Save className="mr-2 h-4 w-4" /> Save Profile
             </Button>
