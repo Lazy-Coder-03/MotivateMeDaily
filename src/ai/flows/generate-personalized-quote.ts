@@ -39,7 +39,8 @@ const prompt = ai.definePrompt({
   name: 'generatePersonalizedQuotePrompt',
   input: {schema: GeneratePersonalizedQuoteInputSchema},
   output: {schema: GeneratePersonalizedQuoteOutputSchema},
-  prompt: `You are a motivational quote generator. Generate a quote based on the following user information:
+  prompt: `You are a motivational quote generator. Generate a quote based on the following user information.
+If a demographic field (Gender, Relationship Status, Sexuality) has the value "prefer_not_to_say", you should ignore that field and not use it for personalization.
 
 Age: {{{age}}}
 Goals: {{{goals}}}
@@ -49,19 +50,13 @@ Specific focus for motivation: {{{motivationFocus}}}
 Desired Tone: {{{motivationalTone}}}
 {{/if}}
 {{#if gender}}
-{{#unless (eq gender "prefer_not_to_say")}}
 Gender: {{{gender}}}
-{{/unless}}
 {{/if}}
 {{#if relationshipStatus}}
-{{#unless (eq relationshipStatus "prefer_not_to_say")}}
 Relationship Status: {{{relationshipStatus}}}
-{{/unless}}
 {{/if}}
 {{#if sexuality}}
-{{#unless (eq sexuality "prefer_not_to_say")}}
 Sexuality: {{{sexuality}}}
-{{/unless}}
 {{/if}}
 
 Adjust the style and language of the quote to match the desired tone if provided. If no tone is specified, use a general inspirational and uplifting tone.
@@ -83,3 +78,4 @@ const generatePersonalizedQuoteFlow = ai.defineFlow(
     return output!;
   }
 );
+
