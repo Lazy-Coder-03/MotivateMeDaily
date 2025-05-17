@@ -61,15 +61,16 @@ Sexuality: {{{sexuality}}}
 {{/if}}
 
 Adjust the style and language of the quote to match the desired tone if provided. If no tone is specified, use a general inspirational and uplifting tone.
-The quote should be concise and impactful.
+The quote should be concise and impactful. Try to provide variety if you have recently generated a quote for this user profile.
 
 {{#if onlyFamousQuotes}}
 IMPORTANT: The user has requested that the quote MUST be from a well-known book, fictional character, or real influential figure.
 You MUST find an existing quote from such a source that is relevant to the user's details. Do NOT generate an original quote.
+Strive for variety; if you have provided a quote for this user recently, try to find a different famous quote that still fits their needs.
 If you cannot find a suitable famous quote, clearly state that you couldn't find a famous quote matching their criteria, for example: "I couldn't find a famous quote that perfectly matched your request, but here's a general one: [general famous quote]" or simply "Could not find a specific famous quote for your criteria."
 Attribute the quote if possible (e.g., "- Character Name, Book Title" or "- Influential Figure").
 {{else}}
-If appropriate and aligns with the user's details (age, goals, life situation, motivation focus, and any provided demographic information like gender, relationship status, or sexuality), you can also draw inspiration from well-known books, fictional characters, or real influential figures who might offer relevant wisdom for the user's current stage or focus. Use any provided demographic information respectfully to enhance personalization and relevance, without making stereotypes. The quote should still be original and personalized, but can subtly reflect the essence or style of such a source if you choose to use one. For example, if the user is a student struggling with procrastination, a quote inspired by a stoic philosopher might be fitting.
+If appropriate and aligns with the user's details (age, goals, life situation, motivation focus, and any provided demographic information like gender, relationship status, or sexuality), you can also draw inspiration from well-known books, fictional characters, or real influential figures who might offer relevant wisdom for the user's current stage or focus. Use any provided demographic information respectfully to enhance personalization and relevance, without making stereotypes. The quote should still be original and personalized, but can subtly reflect the essence or style of such a source if you choose to use one. For example, if the user is a student struggling with procrastination, a quote inspired by a stoic philosopher might be fitting. Strive for variety; if you have provided a quote for this user recently, try to find a different quote (original or inspired) that still fits their needs.
 {{/if}}
 
 Quote:`,
@@ -86,3 +87,4 @@ const generatePersonalizedQuoteFlow = ai.defineFlow(
     return output!;
   }
 );
+
