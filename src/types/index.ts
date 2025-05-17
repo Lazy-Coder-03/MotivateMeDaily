@@ -1,3 +1,4 @@
+
 export interface UserProfile {
   age: number | undefined;
   goals: string;
@@ -18,7 +19,11 @@ export interface Quote {
 }
 
 export interface NotificationSettings {
-  frequency: 'daily' | 'twice_daily' | 'hourly' | 'disabled';
+  enabled: boolean;
+  startTime: number; // Hour 0-23
+  endTime: number;   // Hour 0-23
+  numQuotes: number;
+  intervalHours: number; // e.g., every X hours
 }
 
 export const DEFAULT_USER_PROFILE: UserProfile = {
@@ -34,5 +39,9 @@ export const DEFAULT_USER_PROFILE: UserProfile = {
 };
 
 export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
-  frequency: 'daily',
+  enabled: true,
+  startTime: 9, // 9 AM
+  endTime: 17,  // 5 PM
+  numQuotes: 1,
+  intervalHours: 24, // Effectively once a day within the window by default
 };
