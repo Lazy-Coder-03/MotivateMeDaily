@@ -10,7 +10,7 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: 'MotivateMe Daily',
+  title: 'MotivateMe',
   description: 'Get your daily dose of personalized motivation.',
   manifest: '/manifest.json', // Added manifest link here for Next.js metadata
 };

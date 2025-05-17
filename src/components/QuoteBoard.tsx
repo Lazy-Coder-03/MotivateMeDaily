@@ -133,7 +133,7 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
      return (
       <div className="text-center py-10">
         <AlertTriangle className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-        <h2 className="text-xl font-semibold mb-2">Welcome to MotivateMe Daily!</h2>
+        <h2 className="text-xl font-semibold mb-2">Welcome to MotivateMe!</h2>
         <p className="text-muted-foreground mb-4">
           Please set up your profile to start receiving personalized motivational quotes.
         </p>

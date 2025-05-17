@@ -1,4 +1,4 @@
-# **App Name**: MotivateMe Daily
+# **App Name**: MotivateMe
 
 ## Core Features:
 
