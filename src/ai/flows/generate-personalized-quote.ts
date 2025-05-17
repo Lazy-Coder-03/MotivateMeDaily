@@ -13,7 +13,7 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GeneratePersonalizedQuoteInputSchema = z.object({
-  age: z.number().describe("The user's age."),
+  age: z.number().optional().describe("The user's age."),
   goals: z.string().describe("The user's goals."),
   lifeSituation: z.string().describe("The user's current life situation."),
   motivationFocus: z.string().describe("What the user specifically needs motivation for."),
@@ -44,7 +44,9 @@ const prompt = ai.definePrompt({
   prompt: `You are a motivational quote generator. Generate a quote based on the following user information.
 If a demographic field (Gender, Relationship Status, Sexuality) has the value "prefer_not_to_say", you should ignore that field and not use it for personalization.
 
+{{#if age}}
 Age: {{{age}}}
+{{/if}}
 Goals: {{{goals}}}
 Life Situation: {{{lifeSituation}}}
 Specific focus for motivation: {{{motivationFocus}}}
@@ -103,7 +105,11 @@ const generatePersonalizedQuoteFlow = ai.defineFlow(
   },
   async input => {
     const {output} = await prompt(input);
-    return output!;
+    if (!output) {
+      // Return a valid structure according to GeneratePersonalizedQuoteOutputSchema
+      return { quote: "Sorry, I couldn't generate a personalized quote for you at this moment. Please try again or adjust your profile." };
+    }
+    return output;
   }
 );
 
