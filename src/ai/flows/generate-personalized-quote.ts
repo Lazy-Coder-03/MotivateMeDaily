@@ -103,13 +103,22 @@ const generatePersonalizedQuoteFlow = ai.defineFlow(
     inputSchema: GeneratePersonalizedQuoteInputSchema,
     outputSchema: GeneratePersonalizedQuoteOutputSchema,
   },
-  async input => {
-    const {output} = await prompt(input);
-    if (!output) {
-      // Return a valid structure according to GeneratePersonalizedQuoteOutputSchema
-      return { quote: "Sorry, I couldn't generate a personalized quote for you at this moment. Please try again or adjust your profile." };
+  async (input): Promise<GeneratePersonalizedQuoteOutput> => {
+    try {
+      const {output} = await prompt(input);
+      
+      // Check if output is valid and output.quote is a non-empty string
+      if (!output || typeof output.quote !== 'string' || output.quote.trim() === '') {
+        console.warn('Personalized quote generation returned invalid, missing, or empty quote. Falling back to default.');
+        return { quote: "Sorry, I couldn't generate a personalized quote for you at this moment. Please try again or adjust your profile." };
+      }
+      
+      return output;
+    } catch (flowError) {
+      console.error('Error within generatePersonalizedQuoteFlow during prompt execution:', flowError);
+      // Return a valid structure according to GeneratePersonalizedQuoteOutputSchema in case of any error
+      return { quote: "An unexpected error occurred while generating your quote. Please try again or contact support." };
     }
-    return output;
   }
 );
 
