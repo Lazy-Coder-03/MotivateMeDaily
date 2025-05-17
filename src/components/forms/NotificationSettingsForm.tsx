@@ -57,8 +57,20 @@ export default function NotificationSettingsForm({ initialSettings, onSave }: No
   const formatHour = (hour: number): string => {
     const h = hour % 12 || 12; 
     const ampm = hour >= 12 && hour < 24 ? 'PM' : 'AM'; 
-    if (hour === 24) return '12:00 AM (next day)';
-    return `${h.toString().padStart(2, '0')}:00 ${ampm}`;
+    if (hour === 24 || hour === 0) return '12:00 AM'; // Midnight
+    return `${h.toString().padStart(1, '0')}:00 ${ampm}`;
+  };
+
+  const getTimeWindowDisplay = () => {
+    const startStr = formatHour(watchedStartTime);
+    let endStr = formatHour(watchedEndTime);
+    if (watchedEndTime <= watchedStartTime && watchedEnabled) { // Check enabled to avoid "(next day)" when initializing
+      endStr += " (next day)";
+    }
+    if (watchedStartTime === watchedEndTime && watchedEnabled) {
+        return "All day (24 hours)";
+    }
+    return `${startStr} - ${endStr}`;
   };
 
 
@@ -103,25 +115,24 @@ export default function NotificationSettingsForm({ initialSettings, onSave }: No
                   <div className="flex justify-between items-center mb-1">
                     <FormLabel>Active Notification Window</FormLabel>
                     <span className="text-sm font-medium text-primary">
-                      {formatHour(watchedStartTime)} - {formatHour(watchedEndTime)}
+                      {getTimeWindowDisplay()}
                     </span>
                   </div>
                   <Slider
                     value={[watchedStartTime, watchedEndTime]}
                     min={0}
-                    max={23}
+                    max={23} // Slider visually goes from 0 to 23
                     step={1}
                     onValueChange={(values: number[]) => {
                       form.setValue('startTime', values[0], { shouldValidate: true });
                       form.setValue('endTime', values[1], { shouldValidate: true });
                     }}
-                    className="my-4" // Added more margin for better spacing
-                    aria-label={`Active notification window: ${formatHour(watchedStartTime)} to ${formatHour(watchedEndTime)}`}
+                    className="my-4"
+                    aria-label={`Active notification window: ${getTimeWindowDisplay()}`}
                   />
                   <FormDescription>
-                    Set the time window during which you want to receive notifications.
+                    Set the time window. If end time is earlier than start time, it implies the window crosses midnight. Selecting the same start and end time implies a 24-hour window.
                   </FormDescription>
-                  {/* Display error message for endTime if validation fails (e.g., end time not after start time) */}
                   {form.formState.errors.endTime && (
                     <FormMessage>{form.formState.errors.endTime.message}</FormMessage>
                   )}
@@ -171,9 +182,18 @@ export default function NotificationSettingsForm({ initialSettings, onSave }: No
                         />
                       </FormControl>
                       <FormDescription>
-                        How often to send the batch of quotes (e.g., every X hours) within your active time window (1-24).
+                        How often to send the batch of quotes (e.g., every X hours) within your active time window (1-24). If window is 24h, interval must be 24h.
                       </FormDescription>
-                      <FormMessage />
+                      {/* Display general interval error if refine for intervalHours fails */}
+                      {form.formState.errors.intervalHours && !form.formState.errors.endTime && !form.formState.errors.startTime &&(
+                         <FormMessage>{form.formState.errors.intervalHours.message}</FormMessage>
+                      )}
+                      {/* Display root error if it's the one from the schema refine for intervalHours */}
+                      {form.formState.errors.root?.message?.includes("interval") && (
+                         <FormMessage>{form.formState.errors.root.message}</FormMessage>
+                      )}
+
+
                     </FormItem>
                   )}
                 />
@@ -188,4 +208,3 @@ export default function NotificationSettingsForm({ initialSettings, onSave }: No
     </Card>
   );
 }
-
