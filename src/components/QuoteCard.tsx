@@ -38,7 +38,7 @@ export default function QuoteCard({ quote, onRate, onDelete, className }: QuoteC
   return (
     <Card 
       className={cn(
-        "w-full sm:w-72 h-auto min-h-[200px] bg-[hsl(55,100%,88%)] text-stone-800 shadow-xl flex flex-col justify-between p-4 relative break-inside-avoid-column transition-all duration-300 ease-out hover:shadow-2xl",
+        "w-full sm:w-60 h-auto min-h-[240px] bg-[hsl(55,100%,88%)] text-stone-800 shadow-xl flex flex-col justify-between p-4 relative break-inside-avoid-column transition-all duration-300 ease-out hover:shadow-2xl",
         className
       )}
       style={{ transform: `rotate(${rotation}deg)` }}

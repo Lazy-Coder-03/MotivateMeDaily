@@ -115,7 +115,7 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
       </div>
 
       {isLoadingQuote && quotes.length === 0 && (
-         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-60 w-full bg-yellow-200/50" />)}
         </div>
       )}
@@ -129,7 +129,7 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
       )}
 
       {quotes.length > 0 && (
-        <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-6 space-y-6">
+        <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-8 space-y-8">
           {quotes.map((quote) => (
             <QuoteCard 
               key={quote.id} 
