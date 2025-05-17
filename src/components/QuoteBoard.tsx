@@ -4,9 +4,9 @@
 import type { Quote, UserProfile } from '@/types';
 import QuoteCard from './QuoteCard';
 import { Button } from './ui/button';
-import { PlusCircle, AlertTriangle, SparklesIcon } from 'lucide-react'; // Renamed Sparkles to SparklesIcon to avoid conflict
+import { PlusCircle, AlertTriangle, SparklesIcon } from 'lucide-react';
 import Link from 'next/link';
-import { generatePersonalizedQuote } from '@/ai/flows/generate-personalized-quote';
+import { generatePersonalizedQuote, type GeneratePersonalizedQuoteOutput } from '@/ai/flows/generate-personalized-quote';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { Skeleton } from './ui/skeleton';
@@ -17,6 +17,9 @@ interface QuoteBoardProps {
   onQuotesUpdate: (quotes: Quote[]) => void;
 }
 
+const RECENT_QUOTES_HISTORY_COUNT = 5; // Number of recent quotes to check against for duplicates
+const MAX_GENERATION_ATTEMPTS = 3; // Initial attempt + 2 retries
+
 export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate }: QuoteBoardProps) {
   const { toast } = useToast();
   const [isLoadingQuote, setIsLoadingQuote] = useState(false);
@@ -25,7 +28,7 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
   const handleGenerateQuote = async () => {
     if (!userProfile || !userProfile.age || !userProfile.goals || !userProfile.lifeSituation || !userProfile.motivationFocus) {
       let description = "Please complete your profile to generate personalized quotes. Age, goals, life situation, and motivation focus are required.";
-      if (userProfile) {
+       if (userProfile) {
         if (!userProfile.goals) description = "Please specify your goals in your profile.";
         else if (!userProfile.lifeSituation) description = "Please specify your current life situation in your profile.";
         else if (!userProfile.motivationFocus) description = "Please specify what you need motivation for in your profile.";
@@ -42,21 +45,54 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
     }
 
     setIsLoadingQuote(true);
+    let newQuoteText = "";
+    let generatedQuoteOutput: GeneratePersonalizedQuoteOutput | null = null;
+    let attempt = 0;
+
     try {
-      const result = await generatePersonalizedQuote({
-        age: userProfile.age,
-        goals: userProfile.goals,
-        lifeSituation: userProfile.lifeSituation,
-        motivationFocus: userProfile.motivationFocus,
-        motivationalTone: userProfile.motivationalTone || 'inspirational',
-        gender: userProfile.gender,
-        relationshipStatus: userProfile.relationshipStatus,
-        sexuality: userProfile.sexuality,
-        onlyFamousQuotes: userProfile.onlyFamousQuotes,
-      });
+      while (attempt < MAX_GENERATION_ATTEMPTS) {
+        attempt++;
+        const recentQuoteTexts = quotes.slice(0, RECENT_QUOTES_HISTORY_COUNT).map(q => q.text);
+
+        generatedQuoteOutput = await generatePersonalizedQuote({
+          age: userProfile.age,
+          goals: userProfile.goals,
+          lifeSituation: userProfile.lifeSituation,
+          motivationFocus: userProfile.motivationFocus,
+          motivationalTone: userProfile.motivationalTone || 'inspirational',
+          gender: userProfile.gender,
+          relationshipStatus: userProfile.relationshipStatus,
+          sexuality: userProfile.sexuality,
+          onlyFamousQuotes: userProfile.onlyFamousQuotes,
+          recentQuotes: recentQuoteTexts,
+        });
+        
+        newQuoteText = generatedQuoteOutput.quote;
+
+        const isNotFoundMessage = newQuoteText.toLowerCase().startsWith("could not find") || newQuoteText.toLowerCase().startsWith("i couldn't find");
+
+        if (isNotFoundMessage || !recentQuoteTexts.includes(newQuoteText)) {
+          break; // Unique quote found or it's a "not found" message, so proceed
+        }
+
+        if (attempt >= MAX_GENERATION_ATTEMPTS) {
+          toast({
+            title: "Heads Up!",
+            description: "Found a quote that's a great match, though you might have seen it recently. Try tweaking your profile for more variety!",
+          });
+          // Proceed with the last generated quote even if it's a duplicate
+        }
+        // else, loop will continue for another attempt
+      }
+
+      if (!generatedQuoteOutput) {
+        // This case should ideally not be reached if MAX_GENERATION_ATTEMPTS >= 1
+        throw new Error("Failed to get a response from the AI after multiple attempts.");
+      }
+
       const newQuote: Quote = {
         id: Date.now().toString(), // Simple ID generation
-        text: result.quote,
+        text: newQuoteText,
         timestamp: Date.now(),
         rating: 0,
       };
@@ -67,6 +103,7 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
         title: "New Quote Generated!",
         description: "A fresh dose of motivation just for you.",
       });
+
     } catch (error) {
       console.error("Failed to generate quote:", error);
       toast({
@@ -130,7 +167,7 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
       </div>
 
       {isLoadingQuote && quotes.length === 0 && (
-         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12">
+         <div className="grid grid-cols-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-6 sm:gap-8 md:gap-12">
           {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-64 w-full bg-card" />)}
         </div>
       )}
@@ -159,3 +196,4 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
     </div>
   );
 }
+

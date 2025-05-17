@@ -22,6 +22,7 @@ const GeneratePersonalizedQuoteInputSchema = z.object({
   relationshipStatus: z.enum(['single', 'in_a_relationship', 'married', 'engaged', 'divorced', 'widowed', 'complicated', 'prefer_not_to_say']).optional().describe("The user's relationship status, if provided."),
   sexuality: z.enum(['straight', 'gay', 'lesbian', 'bisexual', 'pansexual', 'asexual', 'queer', 'questioning', 'other', 'prefer_not_to_say']).optional().describe("The user's sexuality, if provided."),
   onlyFamousQuotes: z.boolean().optional().describe("If true, the quote must be sourced from a known person, character, or book. If false or undefined, the AI can generate an original quote or source one."),
+  recentQuotes: z.array(z.string()).optional().describe('A list of recently generated quote texts to avoid repetition.'),
 });
 export type GeneratePersonalizedQuoteInput = z.infer<typeof GeneratePersonalizedQuoteInputSchema>;
 
@@ -61,16 +62,34 @@ Sexuality: {{{sexuality}}}
 {{/if}}
 
 Adjust the style and language of the quote to match the desired tone if provided. If no tone is specified, use a general inspirational and uplifting tone.
-The quote should be concise and impactful. Try to provide variety if you have recently generated a quote for this user profile.
+The quote should be concise and impactful.
 
 {{#if onlyFamousQuotes}}
 IMPORTANT: The user has requested that the quote MUST be from a well-known book, fictional character, or real influential figure.
 You MUST find an existing quote from such a source that is relevant to the user's details. Do NOT generate an original quote.
+You MUST also ensure the quote is NOT present in the following list of recent quotes:
+{{#if recentQuotes}}
+{{#each recentQuotes}}
+- "{{{this}}}"
+{{/each}}
+{{else}}
+(No recent quotes provided, so less restriction on uniqueness for the first few famous quotes)
+{{/if}}
 Strive for variety; if you have provided a quote for this user recently, try to find a different famous quote that still fits their needs.
-If you cannot find a suitable famous quote, clearly state that you couldn't find a famous quote matching their criteria, for example: "I couldn't find a famous quote that perfectly matched your request, but here's a general one: [general famous quote]" or simply "Could not find a specific famous quote for your criteria."
+If you cannot find a suitable AND unique famous quote (i.e., one not in the recent quotes list), clearly state that you couldn't find a famous quote matching their criteria and recency requirements, for example: "I couldn't find a new famous quote that perfectly matched your request and recent history." or "Could not find a new, specific famous quote for your criteria at this time."
 Attribute the quote if possible (e.g., "- Character Name, Book Title" or "- Influential Figure").
 {{else}}
-If appropriate and aligns with the user's details (age, goals, life situation, motivation focus, and any provided demographic information like gender, relationship status, or sexuality), you can also draw inspiration from well-known books, fictional characters, or real influential figures who might offer relevant wisdom for the user's current stage or focus. Use any provided demographic information respectfully to enhance personalization and relevance, without making stereotypes. The quote should still be original and personalized, but can subtly reflect the essence or style of such a source if you choose to use one. For example, if the user is a student struggling with procrastination, a quote inspired by a stoic philosopher might be fitting. Strive for variety; if you have provided a quote for this user recently, try to find a different quote (original or inspired) that still fits their needs.
+Generate an original and personalized quote.
+You MUST ensure the quote is NOT present in the following list of recent quotes:
+{{#if recentQuotes}}
+{{#each recentQuotes}}
+- "{{{this}}}"
+{{/each}}
+{{else}}
+(No recent quotes provided, so less restriction on uniqueness for the first few quotes)
+{{/if}}
+If appropriate and aligns with the user's details (age, goals, life situation, motivation focus, and any provided demographic information like gender, relationship status, or sexuality), you can also draw inspiration from well-known books, fictional characters, or real influential figures who might offer relevant wisdom for the user's current stage or focus. Use any provided demographic information respectfully to enhance personalization and relevance, without making stereotypes. The quote should still be original and personalized, but can subtly reflect the essence or style of such a source if you choose to use one.
+Strive for variety; if you have provided a quote for this user recently, try to find a different quote (original or inspired) that still fits their needs.
 {{/if}}
 
 Quote:`,
