@@ -21,11 +21,26 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Save } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface UserProfileFormProps {
   initialProfile: UserProfile;
   onSave: (profile: UserProfile) => void;
 }
+
+const toneOptions = [
+  { value: 'inspirational', label: 'Inspirational' },
+  { value: 'humorous', label: 'Humorous' },
+  { value: 'direct', label: 'Direct & Action-Oriented' },
+  { value: 'gentle', label: 'Gentle & Encouraging' },
+  { value: 'philosophical', label: 'Philosophical & Reflective' },
+] as const;
 
 export default function UserProfileForm({ initialProfile, onSave }: UserProfileFormProps) {
   const { toast } = useToast();
@@ -35,6 +50,7 @@ export default function UserProfileForm({ initialProfile, onSave }: UserProfileF
       age: initialProfile.age || '',
       goals: initialProfile.goals || "",
       lifeSituation: initialProfile.lifeSituation || "",
+      motivationalTone: initialProfile.motivationalTone || "inspirational",
     },
   });
 
@@ -43,6 +59,7 @@ export default function UserProfileForm({ initialProfile, onSave }: UserProfileF
       age: data.age ? Number(data.age) : undefined,
       goals: data.goals,
       lifeSituation: data.lifeSituation,
+      motivationalTone: data.motivationalTone,
     };
     onSave(profileToSave);
     toast({
@@ -113,6 +130,33 @@ export default function UserProfileForm({ initialProfile, onSave }: UserProfileF
                   </FormControl>
                   <FormDescription>
                     Briefly describe your current circumstances.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="motivationalTone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Preferred Quote Tone</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a tone" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {toneOptions.map(option => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Choose the style of motivation you prefer.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

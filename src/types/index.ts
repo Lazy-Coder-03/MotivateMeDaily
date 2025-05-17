@@ -2,6 +2,7 @@ export interface UserProfile {
   age: number | undefined;
   goals: string;
   lifeSituation: string;
+  motivationalTone?: 'inspirational' | 'humorous' | 'direct' | 'gentle' | 'philosophical';
 }
 
 export interface Quote {
@@ -19,6 +20,7 @@ export const DEFAULT_USER_PROFILE: UserProfile = {
   age: undefined,
   goals: '',
   lifeSituation: '',
+  motivationalTone: 'inspirational',
 };
 
 export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {

@@ -15,6 +15,7 @@ const GeneratePersonalizedQuoteInputSchema = z.object({
   age: z.number().describe('The user\'s age.'),
   goals: z.string().describe('The user\'s goals.'),
   lifeSituation: z.string().describe('The user\'s current life situation.'),
+  motivationalTone: z.enum(['inspirational', 'humorous', 'direct', 'gentle', 'philosophical']).optional().describe('The desired tone of the motivational quote.'),
 });
 export type GeneratePersonalizedQuoteInput = z.infer<typeof GeneratePersonalizedQuoteInputSchema>;
 
@@ -38,6 +39,12 @@ const prompt = ai.definePrompt({
 Age: {{{age}}}
 Goals: {{{goals}}}
 Life Situation: {{{lifeSituation}}}
+{{#if motivationalTone}}
+Desired Tone: {{{motivationalTone}}}
+{{/if}}
+
+Adjust the style and language of the quote to match the desired tone if provided. If no tone is specified, use a general inspirational and uplifting tone.
+The quote should be concise and impactful.
 
 Quote:`,
 });

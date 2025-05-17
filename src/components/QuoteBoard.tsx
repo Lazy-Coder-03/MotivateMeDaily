@@ -38,6 +38,7 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
         age: userProfile.age,
         goals: userProfile.goals,
         lifeSituation: userProfile.lifeSituation,
+        motivationalTone: userProfile.motivationalTone || 'inspirational',
       });
       const newQuote: Quote = {
         id: Date.now().toString(), // Simple ID generation
@@ -129,7 +130,7 @@ export default function QuoteBoard({ initialQuotes, userProfile, onQuotesUpdate 
       )}
 
       {quotes.length > 0 && (
-        <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-8 space-y-8">
+         <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-8 space-y-8">
           {quotes.map((quote) => (
             <QuoteCard 
               key={quote.id} 
